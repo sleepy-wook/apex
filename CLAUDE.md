@@ -158,8 +158,8 @@ apex/
 |-------|------|------|
 | 0 | 프로젝트 셋업 (레포, 인프라, 환경) | ✅ 완료 |
 | 1 | Databricks 파이프라인 (Bronze → Silver → Gold) | ✅ 완료 |
-| 2 | Supabase DB 세팅 (스키마 + 인덱스) | 🔜 다음 |
-| 3 | FastAPI 백엔드 (API + Redis) | |
+| 2 | Supabase DB 세팅 (스키마 + 인덱스) | ✅ 완료 |
+| 3 | FastAPI 백엔드 (API + Redis) | 🔜 다음 |
 | 4 | Next.js 프론트엔드 (디자인 토큰 → 컴포넌트 → 페이지) | |
 | 5 | 뉴스 피드 (RSS + 홈 UI) | |
 | 6 | 자동화 (GP 주말 cron + Job 스케줄) | |

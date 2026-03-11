@@ -27,7 +27,7 @@ def read_bronze(table_name):
 def save_to_silver(df, table_name, partition_cols=None):
     """Silver Delta Table 저장 + Unity Catalog 등록."""
     path = f"{S3.SILVER_PATH}/{table_name}"
-    writer = df.write.format("delta").mode("overwrite")
+    writer = df.write.format("delta").mode("overwrite").option("overwriteSchema", "true")
     if partition_cols:
         writer = writer.partitionBy(*partition_cols)
     writer.save(path)
@@ -158,9 +158,9 @@ def transform_pit():
         F.to_timestamp("date").alias("date"),
         F.col("lap_number").cast(IntegerType()),
         F.coalesce(
-            F.col("pit_duration").cast(DoubleType()),
-            F.col("lane_duration").cast(DoubleType()),
-            F.col("stop_duration").cast(DoubleType()),
+            F.expr("try_cast(pit_duration as double)"),
+            F.expr("try_cast(lane_duration as double)"),
+            F.expr("try_cast(stop_duration as double)"),
         ).alias("pit_duration_seconds"),
         F.col("year").cast(IntegerType()),
     ).dropDuplicates(["session_key", "driver_number", "lap_number"])
@@ -236,12 +236,12 @@ def transform_race_control():
         F.col("meeting_key").cast(IntegerType()),
         F.col("session_key").cast(IntegerType()),
         F.to_timestamp("date").alias("date"),
-        F.col("driver_number").cast(IntegerType()),
-        F.col("lap_number").cast(IntegerType()),
+        F.expr("try_cast(driver_number as int)").alias("driver_number"),
+        F.expr("try_cast(lap_number as int)").alias("lap_number"),
         F.col("category"),
         F.col("flag"),
         F.col("scope"),
-        F.col("sector").cast(IntegerType()),
+        F.expr("try_cast(sector as int)").alias("sector"),
         F.col("message"),
         F.col("year").cast(IntegerType()),
     ).dropDuplicates(["session_key", "date", "message"])

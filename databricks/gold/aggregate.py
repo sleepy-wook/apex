@@ -24,7 +24,7 @@ def read_silver(table_name):
 def save_to_gold(df, table_name, partition_cols=None):
     """Gold Delta Table 저장 + Unity Catalog 등록."""
     path = f"{S3.GOLD_PATH}/{table_name}"
-    writer = df.write.format("delta").mode("overwrite")
+    writer = df.write.format("delta").mode("overwrite").option("overwriteSchema", "true")
     if partition_cols:
         writer = writer.partitionBy(*partition_cols)
     writer.save(path)
