@@ -1,11 +1,16 @@
 # Databricks notebook source
+
+# COMMAND ----------
+
+# MAGIC %run ../config
+
+# COMMAND ----------
+
 # =============================================================================
 # Gold → Supabase 데이터 적재
 # =============================================================================
 # Gold Delta Table → PostgreSQL (Supabase) INSERT.
 # lap_analysis, position_changes는 데이터량이 크므로 S3에서 직접 서빙.
-#
-# 실행: %run ../config 후 sync_all()
 # =============================================================================
 
 import json
