@@ -7,7 +7,8 @@ __pycache__/
 .venv/
 venv/
 .env
-.env.*
+.env.local
+.env.production
 
 # Databricks
 databricks/.databricks/
@@ -17,7 +18,8 @@ run_bronze.py
 
 # FastAPI
 backend/.env
-backend/.env.*
+backend/.env.local
+backend/.env.production
 
 # Next.js
 frontend/.next/
