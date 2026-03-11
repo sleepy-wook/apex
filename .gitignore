@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# Databricks
+databricks/.databricks/
+databricks/cache/
+*.dbx
+
+# FastAPI
+backend/.env
+backend/.env.*
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env.*
+
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+.idea/
+.vscode/
+*.iml

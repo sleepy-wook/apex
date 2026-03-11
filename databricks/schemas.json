@@ -1,0 +1,359 @@
+{
+  "_metadata": {
+    "description": "Apex F1 데이터 파이프라인 — API 원본 스키마 + Medallion 레이어 스키마 레퍼런스",
+    "last_verified": "2025-03-11",
+    "notes": [
+      "OpenF1: 2023 시즌부터 사용 가능, 실시간/준실시간 데이터",
+      "Jolpica (Ergast 후속): 1950 시즌부터, 역사 데이터 + 챔피언십 스탠딩",
+      "Bronze: API 원본 그대로 저장 (타입 변환 없음)",
+      "Silver: 타입 캐스팅 + null 처리 + flatten + 중복 제거",
+      "Gold: 비즈니스 집계 테이블 (프론트엔드/API 직접 서빙)"
+    ]
+  },
+
+  "sources": {
+    "openf1": {
+      "base_url": "https://api.openf1.org/v1",
+      "coverage": "2023+",
+      "rate_limit": "없음 (공식 문서 기준, 단 과도한 호출 시 차단 가능)",
+
+      "endpoints": {
+        "sessions": {
+          "url": "/sessions",
+          "description": "세션 정보 (FP1, FP2, FP3, Qualifying, Sprint, Race 등)",
+          "fields": {
+            "session_key":       { "type": "int",      "nullable": false, "description": "세션 고유 ID" },
+            "session_type":      { "type": "string",   "nullable": false, "description": "Practice, Qualifying, Race 등" },
+            "session_name":      { "type": "string",   "nullable": false, "description": "세션 표시명" },
+            "date_start":        { "type": "datetime",  "nullable": false, "description": "ISO 8601 (timezone 포함)" },
+            "date_end":          { "type": "datetime",  "nullable": false, "description": "ISO 8601 (timezone 포함)" },
+            "meeting_key":       { "type": "int",      "nullable": false, "description": "미팅(GP) 고유 ID" },
+            "circuit_key":       { "type": "int",      "nullable": false, "description": "서킷 고유 ID" },
+            "circuit_short_name":{ "type": "string",   "nullable": false, "description": "서킷 약칭" },
+            "country_key":       { "type": "int",      "nullable": false, "description": "국가 고유 ID" },
+            "country_code":      { "type": "string",   "nullable": false, "description": "3자리 국가 코드 (AUS, CHN 등)" },
+            "country_name":      { "type": "string",   "nullable": false, "description": "국가 전체명" },
+            "location":          { "type": "string",   "nullable": false, "description": "도시명" },
+            "gmt_offset":        { "type": "string",   "nullable": false, "description": "GMT 오프셋 (HH:MM:SS)" },
+            "year":              { "type": "int",      "nullable": false, "description": "시즌 연도" }
+          }
+        },
+
+        "drivers": {
+          "url": "/drivers",
+          "description": "드라이버 정보 (세션별)",
+          "known_issues": [
+            "country_code가 null로 오는 경우 확인됨 (2025 시즌)",
+            "headshot_url이 null 가능"
+          ],
+          "fields": {
+            "meeting_key":     { "type": "int",    "nullable": false },
+            "session_key":     { "type": "int",    "nullable": false },
+            "driver_number":   { "type": "int",    "nullable": false, "description": "차량 번호" },
+            "broadcast_name":  { "type": "string", "nullable": false, "description": "방송용 이름 (L NORRIS)" },
+            "full_name":       { "type": "string", "nullable": false, "description": "전체 이름 (Lando NORRIS)" },
+            "name_acronym":    { "type": "string", "nullable": false, "description": "3자리 약칭 (NOR)" },
+            "team_name":       { "type": "string", "nullable": false, "description": "팀명" },
+            "team_colour":     { "type": "string", "nullable": false, "description": "팀 컬러 hex (F47600)" },
+            "first_name":      { "type": "string", "nullable": false },
+            "last_name":       { "type": "string", "nullable": false },
+            "headshot_url":    { "type": "string", "nullable": true,  "description": "프로필 이미지 URL" },
+            "country_code":    { "type": "string", "nullable": true,  "description": "국적 코드 — null 빈번" }
+          }
+        },
+
+        "laps": {
+          "url": "/laps",
+          "description": "랩 타임 데이터",
+          "known_issues": [
+            "pit out/in lap에서 lap_duration, duration_sector_*, st_speed 전부 null",
+            "segments_sector_* 배열 길이가 서킷마다 다름"
+          ],
+          "fields": {
+            "meeting_key":        { "type": "int",      "nullable": false },
+            "session_key":        { "type": "int",      "nullable": false },
+            "driver_number":      { "type": "int",      "nullable": false },
+            "lap_number":         { "type": "int",      "nullable": false },
+            "date_start":         { "type": "datetime",  "nullable": false },
+            "lap_duration":       { "type": "float",    "nullable": true,  "description": "초 단위, pit lap에서 null" },
+            "duration_sector_1":  { "type": "float",    "nullable": true },
+            "duration_sector_2":  { "type": "float",    "nullable": true },
+            "duration_sector_3":  { "type": "float",    "nullable": true },
+            "i1_speed":           { "type": "int",      "nullable": true,  "description": "인터미디엇 1 속도 (km/h)" },
+            "i2_speed":           { "type": "int",      "nullable": true,  "description": "인터미디엇 2 속도 (km/h)" },
+            "st_speed":           { "type": "int",      "nullable": true,  "description": "스피드 트랩 속도 (km/h)" },
+            "is_pit_out_lap":     { "type": "bool",     "nullable": false },
+            "segments_sector_1":  { "type": "array<int>", "nullable": true, "description": "미니섹터 상태 코드 배열" },
+            "segments_sector_2":  { "type": "array<int>", "nullable": true },
+            "segments_sector_3":  { "type": "array<int>", "nullable": true }
+          }
+        },
+
+        "pit": {
+          "url": "/pit",
+          "description": "피트스탑 데이터",
+          "known_issues": [
+            "stop_duration이 null인 경우 빈번 — pit_duration 또는 lane_duration 사용 권장",
+            "3개 duration 필드 중복: Silver에서 pit_duration 하나로 통일"
+          ],
+          "fields": {
+            "meeting_key":    { "type": "int",      "nullable": false },
+            "session_key":    { "type": "int",      "nullable": false },
+            "driver_number":  { "type": "int",      "nullable": false },
+            "date":           { "type": "datetime",  "nullable": false },
+            "lap_number":     { "type": "int",      "nullable": false },
+            "lane_duration":  { "type": "float",    "nullable": true,  "description": "피트레인 통과 시간 (초)" },
+            "stop_duration":  { "type": "float",    "nullable": true,  "description": "정지 시간 — 자주 null" },
+            "pit_duration":   { "type": "float",    "nullable": true,  "description": "전체 피트 시간 (초)" }
+          }
+        },
+
+        "stints": {
+          "url": "/stints",
+          "description": "타이어 스틴트 데이터",
+          "fields": {
+            "meeting_key":       { "type": "int",    "nullable": false },
+            "session_key":       { "type": "int",    "nullable": false },
+            "driver_number":     { "type": "int",    "nullable": false },
+            "stint_number":      { "type": "int",    "nullable": false },
+            "lap_start":         { "type": "int",    "nullable": false, "description": "스틴트 시작 랩" },
+            "lap_end":           { "type": "int",    "nullable": false, "description": "스틴트 종료 랩" },
+            "compound":          { "type": "string", "nullable": false, "description": "SOFT, MEDIUM, HARD, INTERMEDIATE, WET" },
+            "tyre_age_at_start": { "type": "int",    "nullable": false, "description": "스틴트 시작 시 타이어 사용 랩 수" }
+          }
+        },
+
+        "position": {
+          "url": "/position",
+          "description": "실시간 포지션 변화 (시계열)",
+          "known_issues": [
+            "row 수 폭발 — 드라이버 1명 × 1레이스 = ~14행, 전체 = 수백 행",
+            "Gold에서 lap별 snapshot으로 집계 필요"
+          ],
+          "fields": {
+            "meeting_key":   { "type": "int",      "nullable": false },
+            "session_key":   { "type": "int",      "nullable": false },
+            "driver_number": { "type": "int",      "nullable": false },
+            "date":          { "type": "datetime",  "nullable": false },
+            "position":      { "type": "int",      "nullable": false }
+          }
+        },
+
+        "race_control": {
+          "url": "/race_control",
+          "description": "레이스 컨트롤 메시지 (플래그, DRS, 페널티 등)",
+          "known_issues": [
+            "대부분 필드 nullable",
+            "category별로 사용되는 필드가 다름 (Flag → flag/scope/sector, Drs → message만)"
+          ],
+          "fields": {
+            "meeting_key":      { "type": "int",      "nullable": false },
+            "session_key":      { "type": "int",      "nullable": false },
+            "date":             { "type": "datetime",  "nullable": false },
+            "driver_number":    { "type": "int",      "nullable": true },
+            "lap_number":       { "type": "int",      "nullable": true },
+            "category":         { "type": "string",   "nullable": false, "description": "Flag, Drs, SafetyCar, Other 등" },
+            "flag":             { "type": "string",   "nullable": true,  "description": "GREEN, YELLOW, RED, CLEAR 등" },
+            "scope":            { "type": "string",   "nullable": true,  "description": "Track, Sector, Driver" },
+            "sector":           { "type": "int",      "nullable": true },
+            "qualifying_phase": { "type": "string",   "nullable": true },
+            "message":          { "type": "string",   "nullable": false }
+          }
+        }
+      }
+    },
+
+    "jolpica": {
+      "base_url": "https://api.jolpi.ca/ergast/f1",
+      "coverage": "1950+",
+      "rate_limit": "제한 있음 (구체적 수치 미공개, 과도 호출 시 429)",
+      "global_issues": [
+        "모든 숫자 필드가 String으로 옴 — Silver에서 타입 캐스팅 필수",
+        "중첩 JSON 구조 (Driver, Constructor 객체) — flatten 필요",
+        "MRData 래퍼 구조: response.MRData.[Table].[List] 형태"
+      ],
+
+      "endpoints": {
+        "results": {
+          "url": "/{year}/{round}/results.json",
+          "description": "레이스 결과",
+          "fields": {
+            "number":       { "type": "string→int",    "description": "차량 번호" },
+            "position":     { "type": "string→int",    "description": "최종 순위" },
+            "positionText": { "type": "string",         "description": "순위 텍스트 (R=리타이어 등)" },
+            "points":       { "type": "string→float",   "description": "획득 포인트" },
+            "grid":         { "type": "string→int",     "description": "그리드 출발 순위" },
+            "laps":         { "type": "string→int",     "description": "완주 랩 수" },
+            "status":       { "type": "string",          "description": "Finished, +1 Lap, Retired 등" },
+            "Time": {
+              "millis":     { "type": "string→int",     "description": "밀리초 (1위만 절대값)" },
+              "time":       { "type": "string",          "description": "1위=절대시간, 2위+=갭" }
+            },
+            "FastestLap": {
+              "rank":       { "type": "string→int" },
+              "lap":        { "type": "string→int" },
+              "Time.time":  { "type": "string",          "description": "1:22.167 형식" }
+            },
+            "Driver": {
+              "driverId":        { "type": "string", "description": "norris, max_verstappen 등" },
+              "permanentNumber": { "type": "string→int" },
+              "code":            { "type": "string", "description": "NOR, VER 등" },
+              "givenName":       { "type": "string" },
+              "familyName":      { "type": "string" },
+              "dateOfBirth":     { "type": "string→date", "description": "YYYY-MM-DD" },
+              "nationality":     { "type": "string" }
+            },
+            "Constructor": {
+              "constructorId": { "type": "string" },
+              "name":          { "type": "string" },
+              "nationality":   { "type": "string" }
+            }
+          }
+        },
+
+        "driverStandings": {
+          "url": "/{year}/driverStandings.json",
+          "description": "드라이버 챔피언십 스탠딩",
+          "fields": {
+            "position":     { "type": "string→int" },
+            "positionText": { "type": "string" },
+            "points":       { "type": "string→float" },
+            "wins":         { "type": "string→int" },
+            "Driver":       { "type": "object", "description": "results.Driver와 동일 구조" },
+            "Constructors": { "type": "array<object>", "description": "시즌 중 팀 이적 시 복수", "note": "Lawson처럼 RB→Red Bull 이적 시 2개" }
+          }
+        },
+
+        "constructorStandings": {
+          "url": "/{year}/constructorStandings.json",
+          "description": "컨스트럭터 챔피언십 스탠딩",
+          "fields": {
+            "position":     { "type": "string→int" },
+            "positionText": { "type": "string" },
+            "points":       { "type": "string→float" },
+            "wins":         { "type": "string→int" },
+            "Constructor":  { "type": "object", "description": "constructorId, name, nationality" }
+          }
+        }
+      }
+    }
+  },
+
+  "medallion": {
+    "bronze": {
+      "description": "API 원본 데이터 그대로 저장. 타입 변환 없음. S3 Parquet.",
+      "storage": "s3://apex-f1-data/bronze/",
+      "tables": {
+        "bronze_sessions":      { "source": "openf1/sessions",      "partition": ["year"] },
+        "bronze_drivers":       { "source": "openf1/drivers",       "partition": ["year"] },
+        "bronze_laps":          { "source": "openf1/laps",          "partition": ["year", "session_key"] },
+        "bronze_pit":           { "source": "openf1/pit",           "partition": ["year", "session_key"] },
+        "bronze_stints":        { "source": "openf1/stints",        "partition": ["year", "session_key"] },
+        "bronze_position":      { "source": "openf1/position",      "partition": ["year", "session_key"] },
+        "bronze_race_control":  { "source": "openf1/race_control",  "partition": ["year", "session_key"] },
+        "bronze_results":       { "source": "jolpica/results",      "partition": ["year"] },
+        "bronze_driver_standings":      { "source": "jolpica/driverStandings",      "partition": ["year"] },
+        "bronze_constructor_standings": { "source": "jolpica/constructorStandings", "partition": ["year"] }
+      }
+    },
+
+    "silver": {
+      "description": "타입 캐스팅 + null 처리 + flatten + 중복 제거. Delta Table.",
+      "storage": "s3://apex-f1-data/silver/",
+      "transforms": {
+        "silver_sessions": {
+          "from": "bronze_sessions",
+          "transforms": ["datetime 파싱", "gmt_offset → interval 변환"]
+        },
+        "silver_drivers": {
+          "from": "bronze_drivers",
+          "transforms": ["country_code null → 'N/A'", "headshot_url null 처리", "세션별 중복 제거 (최신 우선)"]
+        },
+        "silver_laps": {
+          "from": "bronze_laps",
+          "transforms": ["pit lap null 값 보존 (제거 X)", "segments 배열 → JSON string 또는 별도 테이블"]
+        },
+        "silver_pit": {
+          "from": "bronze_pit",
+          "transforms": ["3개 duration → pit_duration_seconds 하나로 통일 (COALESCE: pit_duration > lane_duration > stop_duration)"]
+        },
+        "silver_stints": {
+          "from": "bronze_stints",
+          "transforms": ["compound 대문자 통일", "stint_laps 계산 (lap_end - lap_start)"]
+        },
+        "silver_position": {
+          "from": "bronze_position",
+          "transforms": ["datetime 파싱", "중복 제거"]
+        },
+        "silver_race_control": {
+          "from": "bronze_race_control",
+          "transforms": ["category별 필드 정규화"]
+        },
+        "silver_results": {
+          "from": "bronze_results",
+          "transforms": [
+            "모든 string→int/float 캐스팅",
+            "Driver/Constructor 객체 flatten → driver_id, driver_code, constructor_id 등",
+            "Time 객체 flatten → time_millis, time_text",
+            "FastestLap flatten → fastest_lap_rank, fastest_lap_number, fastest_lap_time"
+          ]
+        },
+        "silver_driver_standings": {
+          "from": "bronze_driver_standings",
+          "transforms": ["string→int/float", "Driver flatten", "Constructors 배열 → 첫번째 팀 기준 + team_changes 플래그"]
+        },
+        "silver_constructor_standings": {
+          "from": "bronze_constructor_standings",
+          "transforms": ["string→int/float", "Constructor flatten"]
+        }
+      }
+    },
+
+    "gold": {
+      "description": "비즈니스 집계 테이블. 프론트엔드/API에서 직접 서빙.",
+      "storage": "s3://apex-f1-data/gold/",
+      "tables": {
+        "gold_race_summary": {
+          "description": "레이스별 요약 (우승자, 날씨, 총 랩 수, SC 횟수 등)",
+          "sources": ["silver_sessions", "silver_results", "silver_race_control"],
+          "key": ["year", "round"]
+        },
+        "gold_driver_race_result": {
+          "description": "드라이버별 레이스 결과 (순위, 포인트, 그리드→피니시 변화, 피트 횟수, 최고 랩)",
+          "sources": ["silver_results", "silver_pit", "silver_stints", "silver_laps"],
+          "key": ["year", "round", "driver_number"]
+        },
+        "gold_lap_analysis": {
+          "description": "랩별 분석 (랩타임 추이, 섹터별 비교, 타이어 컴파운드별 페이스)",
+          "sources": ["silver_laps", "silver_stints"],
+          "key": ["session_key", "driver_number", "lap_number"]
+        },
+        "gold_pit_strategy": {
+          "description": "피트 전략 요약 (드라이버별 피트 횟수, 타이밍, 언더컷/오버컷 분석)",
+          "sources": ["silver_pit", "silver_stints", "silver_laps"],
+          "key": ["session_key", "driver_number"]
+        },
+        "gold_position_changes": {
+          "description": "랩별 포지션 변화 (position 시계열 → lap 단위 snapshot)",
+          "sources": ["silver_position", "silver_laps"],
+          "key": ["session_key", "driver_number", "lap_number"]
+        },
+        "gold_driver_standings": {
+          "description": "드라이버 챔피언십 현황 (라운드별 누적 포인트)",
+          "sources": ["silver_driver_standings"],
+          "key": ["year", "round", "driver_id"]
+        },
+        "gold_constructor_standings": {
+          "description": "컨스트럭터 챔피언십 현황 (라운드별 누적 포인트)",
+          "sources": ["silver_constructor_standings"],
+          "key": ["year", "round", "constructor_id"]
+        },
+        "gold_head_to_head": {
+          "description": "팀메이트 비교 (같은 팀 드라이버 간 퀄리/레이스 H2H)",
+          "sources": ["silver_results", "silver_drivers"],
+          "key": ["year", "constructor_id"]
+        }
+      }
+    }
+  }
+}
