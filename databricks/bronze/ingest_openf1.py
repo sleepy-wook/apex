@@ -57,12 +57,25 @@ def save_to_bronze(data, table_name, partition_cols=None):
         return
 
     # segments 배열을 JSON string으로 변환 (Spark 스키마 추론 문제 방지)
+    # None-only 컬럼은 빈 문자열로 변환 (타입 추론 실패 방지)
     for row in data:
         for key in ["segments_sector_1", "segments_sector_2", "segments_sector_3"]:
             if key in row and isinstance(row[key], list):
                 row[key] = json.dumps(row[key])
 
-    df = spark.createDataFrame(data)
+    # 모든 값이 None인 컬럼 찾아서 빈 문자열로 대체
+    all_keys = set()
+    for row in data:
+        all_keys.update(row.keys())
+    for key in all_keys:
+        all_none = all(row.get(key) is None for row in data)
+        if all_none:
+            for row in data:
+                row[key] = ""
+
+    import pandas as pd
+    pdf = pd.DataFrame(data)
+    df = spark.createDataFrame(pdf)
     path = f"{S3.BRONZE_PATH}/{table_name}"
 
     writer = df.write.format("delta").mode("overwrite")
