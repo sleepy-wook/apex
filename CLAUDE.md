@@ -49,7 +49,8 @@ apex/
 │   ├── .env.example
 │   ├── Dockerfile
 │   ├── docker-compose.yml
-│   └── requirements.txt
+│   ├── pyproject.toml          # uv 패키지 관리
+│   └── uv.lock
 └── frontend/                # Next.js 15 + TypeScript + Tailwind
     ├── src/
     │   ├── app/             # App Router 페이지
@@ -72,7 +73,7 @@ apex/
 |-------|------|
 | Frontend | Next.js 15 + TypeScript + Tailwind CSS |
 | Charts | Recharts (기본) + D3.js (텔레메트리) |
-| Backend | FastAPI + Python |
+| Backend | FastAPI + Python (uv 패키지 매니저) |
 | Container | Docker |
 | Cache | Redis |
 | DB | PostgreSQL (Supabase) |
@@ -90,6 +91,12 @@ apex/
 - 사용자는 프로젝트 완료 후 **코드 리뷰**
 - 스키마 레퍼런스: `databricks/schemas.json` 참고
 - Unity Catalog: `apex.f1.{table_name}` 네이밍
+
+### 백엔드 패키지 관리
+- **uv** 사용 (pip/requirements.txt 사용 금지)
+- 의존성 추가: `uv add <package>`
+- 실행: `uv run uvicorn app.main:app --reload`
+- Docker에서도 uv 사용
 
 ### 커밋 & 푸시
 - **Phase 단위로 커밋 + 푸시** (Phase 완료 시 반드시)
