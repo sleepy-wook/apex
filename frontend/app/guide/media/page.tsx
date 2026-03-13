@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/layout/PageHeader";
-import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "F1 즐기기 - 영화/다큐/시리즈 가이드 | APEX",
@@ -102,25 +101,34 @@ const mediaItems: MediaItem[] = [
 ];
 
 const typeColors: Record<string, string> = {
-  영화: "var(--color-warning)",
-  다큐멘터리: "var(--color-info)",
-  시리즈: "var(--color-success)",
-  드라마: "var(--color-team-mclaren)",
+  영화: "#f59e0b",
+  다큐멘터리: "#3b82f6",
+  시리즈: "#22c55e",
+  드라마: "#f97316",
 };
 
 export default function MediaPage() {
   return (
     <div>
-      <PageHeader
-        title="F1 즐기기"
-        subtitle="F1을 더 깊게 즐길 수 있는 영화, 다큐멘터리, 드라마"
-        breadcrumbs={[
-          { label: "가이드", href: "/guide" },
-          { label: "F1 즐기기" },
-        ]}
-      />
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+        <Link href="/guide" className="hover:text-foreground transition-colors">가이드</Link>
+        <span>/</span>
+        <span className="text-foreground">F1 즐기기</span>
+      </nav>
 
-      <p className="text-[var(--color-text-secondary)] mb-6 max-w-2xl">
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-1 h-5 bg-primary" />
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
+            F1 즐기기
+          </h1>
+        </div>
+        <p className="text-muted-foreground ml-4">F1을 더 깊게 즐길 수 있는 영화, 다큐멘터리, 드라마</p>
+      </div>
+
+      <p className="text-muted-foreground mb-6 max-w-2xl">
         레이스가 없는 날에도 F1을 즐길 수 있는 방법은 많습니다.
         F1의 역사와 드라마를 담은 영화, 다큐멘터리, 시리즈를 소개합니다.
         입문자에게 추천하는 순서대로 정리했습니다.
@@ -132,8 +140,8 @@ export default function MediaPage() {
             key={`${item.title}-${item.year}`}
             className={`rounded-lg border overflow-hidden ${
               item.highlight
-                ? "bg-[var(--color-bg-elevated)] border-[var(--color-border-hover)]"
-                : "bg-[var(--color-bg-secondary)] border-[var(--color-border-primary)]"
+                ? "bg-card border-primary/30"
+                : "bg-card border-border"
             }`}
           >
             <div className="p-5">
@@ -141,22 +149,22 @@ export default function MediaPage() {
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                    <h3 className="text-lg font-bold text-foreground">
                       {item.titleKo}
                     </h3>
                     {item.highlight && (
-                      <span className="px-1.5 py-0.5 text-xs font-semibold rounded bg-[var(--color-warning)]/15 text-[var(--color-warning)]">
+                      <span className="px-1.5 py-0.5 text-xs font-semibold rounded bg-amber-100 text-amber-700">
                         추천
                       </span>
                     )}
                   </div>
                   {item.titleKo !== item.title && (
-                    <p className="text-xs text-[var(--color-text-tertiary)]">
+                    <p className="text-xs text-muted-foreground">
                       {item.title}
                     </p>
                   )}
                 </div>
-                <span className="text-sm font-mono text-[var(--color-text-tertiary)] shrink-0">
+                <span className="text-sm font-mono text-muted-foreground shrink-0">
                   {item.year}
                 </span>
               </div>
@@ -173,22 +181,22 @@ export default function MediaPage() {
                 >
                   {item.type}
                 </span>
-                <span className="px-2 py-0.5 text-xs rounded-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-tertiary)] border border-[var(--color-border-secondary)]">
+                <span className="px-2 py-0.5 text-xs rounded-full bg-muted text-muted-foreground border border-border">
                   {item.platform}
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                 {item.desc}
               </p>
 
               {/* Recommendation */}
-              <div className="p-3 rounded-md bg-[var(--color-bg-tertiary)]">
-                <span className="text-xs font-medium text-[var(--color-text-tertiary)]">
+              <div className="p-3 rounded-md bg-muted">
+                <span className="text-xs font-medium text-muted-foreground">
                   추천 이유
                 </span>
-                <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {item.recommendation}
                 </p>
               </div>
@@ -198,8 +206,8 @@ export default function MediaPage() {
       </div>
 
       {/* Additional note */}
-      <div className="mt-8 p-4 rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border-secondary)]">
-        <p className="text-sm text-[var(--color-text-secondary)]">
+      <div className="mt-8 p-4 rounded-lg bg-muted border border-border">
+        <p className="text-sm text-muted-foreground">
           여기 소개된 콘텐츠 외에도 F1을 즐기는 방법은 다양합니다.
           공식 F1 유튜브 채널에서 무료로 하이라이트 영상을 볼 수 있고,
           F1 공식 팟캐스트도 운영되고 있습니다. 한국어 F1 커뮤니티로는

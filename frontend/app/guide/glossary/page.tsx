@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PageHeader } from "@/components/layout/PageHeader";
+import Link from "next/link";
 import { Search } from "lucide-react";
 
 interface Term {
@@ -83,27 +83,36 @@ export default function GlossaryPage() {
 
   return (
     <div className="max-w-3xl">
-      <PageHeader
-        title="F1 용어사전"
-        subtitle="F1에서 자주 쓰이는 용어들을 한국어로 쉽게 설명합니다"
-        breadcrumbs={[
-          { label: "가이드", href: "/guide" },
-          { label: "용어사전" },
-        ]}
-      />
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+        <Link href="/guide" className="hover:text-foreground transition-colors">가이드</Link>
+        <span>/</span>
+        <span className="text-foreground">용어사전</span>
+      </nav>
+
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-1 h-5 bg-primary" />
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
+            F1 용어사전
+          </h1>
+        </div>
+        <p className="text-muted-foreground ml-4">F1에서 자주 쓰이는 용어들을 한국어로 쉽게 설명합니다</p>
+      </div>
 
       {/* Search */}
       <div className="relative mb-4">
         <Search
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)]"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
         <input
           type="text"
           placeholder="용어 검색 (한국어 또는 영어)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 text-sm rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-primary)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-border-hover)] transition-colors"
+          className="w-full pl-9 pr-4 py-2.5 text-sm rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
         />
       </div>
 
@@ -115,8 +124,8 @@ export default function GlossaryPage() {
             onClick={() => setActiveCategory(cat)}
             className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
               activeCategory === cat
-                ? "bg-[var(--color-bg-hover)] text-[var(--color-text-primary)] border border-[var(--color-border-hover)]"
-                : "text-[var(--color-text-tertiary)] border border-[var(--color-border-secondary)] hover:text-[var(--color-text-secondary)] hover:border-[var(--color-border-primary)]"
+                ? "bg-muted text-foreground border border-primary/50"
+                : "text-muted-foreground border border-border hover:text-foreground hover:border-border"
             }`}
           >
             {cat}
@@ -125,7 +134,7 @@ export default function GlossaryPage() {
       </div>
 
       {/* Results count */}
-      <p className="text-xs text-[var(--color-text-tertiary)] mb-4">
+      <p className="text-xs text-muted-foreground mb-4">
         {filtered.length}개 용어
       </p>
 
@@ -134,27 +143,27 @@ export default function GlossaryPage() {
         {filtered.map((term) => (
           <div
             key={term.en}
-            className="p-4 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-primary)]"
+            className="p-4 rounded-lg bg-card border border-border"
           >
             <div className="flex items-baseline gap-2 mb-1.5">
-              <h3 className="text-base font-semibold text-[var(--color-text-primary)]">
+              <h3 className="text-base font-semibold text-foreground">
                 {term.ko}
               </h3>
-              <span className="text-xs text-[var(--color-text-tertiary)] font-mono">
+              <span className="text-xs text-muted-foreground font-mono">
                 {term.en}
               </span>
             </div>
-            <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {term.desc}
             </p>
-            <span className="inline-block mt-2 px-2 py-0.5 text-xs rounded bg-[var(--color-bg-tertiary)] text-[var(--color-text-tertiary)]">
+            <span className="inline-block mt-2 px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground">
               {term.category}
             </span>
           </div>
         ))}
 
         {filtered.length === 0 && (
-          <div className="py-12 text-center text-[var(--color-text-tertiary)]">
+          <div className="py-12 text-center text-muted-foreground">
             검색 결과가 없습니다.
           </div>
         )}

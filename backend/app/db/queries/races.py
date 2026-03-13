@@ -5,7 +5,16 @@ async def fetch_seasons() -> list[int]:
     pool = await get_pool()
     async with pool.acquire() as conn:
         rows = await conn.fetch(
-            "SELECT DISTINCT year FROM sessions ORDER BY year DESC"
+            """
+            SELECT DISTINCT year FROM (
+                SELECT DISTINCT year FROM sessions
+                UNION
+                SELECT DISTINCT year FROM driver_standings
+                UNION
+                SELECT DISTINCT year FROM constructor_standings
+            ) t
+            ORDER BY year DESC
+            """
         )
         return [row["year"] for row in rows]
 

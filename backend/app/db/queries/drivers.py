@@ -5,10 +5,11 @@ from app.db.connection import get_pool
 
 async def fetch_drivers(year: int | None = None) -> list[dict]:
     pool = await get_pool()
-    if year is None:
-        year = datetime.now().year
-
     async with pool.acquire() as conn:
+        if year is None:
+            # Use the latest year available in the database
+            row = await conn.fetchrow("SELECT MAX(year) AS max_year FROM drivers")
+            year = row["max_year"] if row and row["max_year"] else datetime.now().year
         # Get the latest session_key per driver for the year to avoid duplicates
         rows = await conn.fetch(
             """

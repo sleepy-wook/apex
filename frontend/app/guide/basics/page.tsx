@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/layout/PageHeader";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "F1 기본 규칙 | APEX",
@@ -15,14 +15,23 @@ export const metadata: Metadata = {
 export default function BasicsPage() {
   return (
     <article className="max-w-3xl">
-      <PageHeader
-        title="F1 기본 규칙"
-        subtitle="Formula 1을 처음 접하는 분들을 위한 기본 가이드"
-        breadcrumbs={[
-          { label: "가이드", href: "/guide" },
-          { label: "기본 규칙" },
-        ]}
-      />
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+        <Link href="/guide" className="hover:text-foreground transition-colors">가이드</Link>
+        <span>/</span>
+        <span className="text-foreground">기본 규칙</span>
+      </nav>
+
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-1 h-5 bg-primary" />
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
+            F1 기본 규칙
+          </h1>
+        </div>
+        <p className="text-muted-foreground ml-4">Formula 1을 처음 접하는 분들을 위한 기본 가이드</p>
+      </div>
 
       {/* F1이란? */}
       <Section title="F1이란?">
@@ -65,22 +74,22 @@ export default function BasicsPage() {
           일반적인 GP 주말은 금요일부터 일요일까지 3일간 진행됩니다.
         </p>
 
-        <h4 className="text-base font-semibold text-[var(--color-text-primary)] mt-4 mb-2">
+        <h4 className="text-base font-semibold text-foreground mt-4 mb-2">
           일반 포맷
         </h4>
-        <ul className="list-disc list-inside space-y-1 text-[var(--color-text-secondary)]">
-          <li><strong className="text-[var(--color-text-primary)]">금요일</strong> &mdash; 프리 프랙티스 1 (FP1), 프리 프랙티스 2 (FP2)</li>
-          <li><strong className="text-[var(--color-text-primary)]">토요일</strong> &mdash; 프리 프랙티스 3 (FP3), 퀄리파잉 (예선)</li>
-          <li><strong className="text-[var(--color-text-primary)]">일요일</strong> &mdash; 결승 레이스</li>
+        <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+          <li><strong className="text-foreground">금요일</strong> &mdash; 프리 프랙티스 1 (FP1), 프리 프랙티스 2 (FP2)</li>
+          <li><strong className="text-foreground">토요일</strong> &mdash; 프리 프랙티스 3 (FP3), 퀄리파잉 (예선)</li>
+          <li><strong className="text-foreground">일요일</strong> &mdash; 결승 레이스</li>
         </ul>
 
-        <h4 className="text-base font-semibold text-[var(--color-text-primary)] mt-4 mb-2">
+        <h4 className="text-base font-semibold text-foreground mt-4 mb-2">
           스프린트 포맷 (시즌 중 6회 정도)
         </h4>
-        <ul className="list-disc list-inside space-y-1 text-[var(--color-text-secondary)]">
-          <li><strong className="text-[var(--color-text-primary)]">금요일</strong> &mdash; FP1, 스프린트 퀄리파잉 (스프린트 슈트아웃)</li>
-          <li><strong className="text-[var(--color-text-primary)]">토요일</strong> &mdash; 스프린트 레이스 (약 100km), 퀄리파잉</li>
-          <li><strong className="text-[var(--color-text-primary)]">일요일</strong> &mdash; 결승 레이스</li>
+        <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+          <li><strong className="text-foreground">금요일</strong> &mdash; FP1, 스프린트 퀄리파잉 (스프린트 슈트아웃)</li>
+          <li><strong className="text-foreground">토요일</strong> &mdash; 스프린트 레이스 (약 100km), 퀄리파잉</li>
+          <li><strong className="text-foreground">일요일</strong> &mdash; 결승 레이스</li>
         </ul>
 
         <InfoBox>
@@ -97,19 +106,19 @@ export default function BasicsPage() {
         <div className="overflow-x-auto mt-4">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--color-border-primary)]">
-                <th className="text-left py-2 pr-4 text-[var(--color-text-tertiary)] font-medium">순위</th>
-                <th className="text-right py-2 text-[var(--color-text-tertiary)] font-medium">포인트</th>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 pr-4 text-muted-foreground font-medium">순위</th>
+                <th className="text-right py-2 text-muted-foreground font-medium">포인트</th>
               </tr>
             </thead>
-            <tbody className="text-[var(--color-text-secondary)]">
+            <tbody className="text-muted-foreground">
               {[
                 [1, 25], [2, 18], [3, 15], [4, 12], [5, 10],
                 [6, 8], [7, 6], [8, 4], [9, 2], [10, 1],
               ].map(([pos, pts]) => (
-                <tr key={pos} className="border-b border-[var(--color-border-secondary)]">
+                <tr key={pos} className="border-b border-border">
                   <td className="py-2 pr-4">
-                    <span className={pos <= 3 ? "font-semibold text-[var(--color-text-primary)]" : ""}>
+                    <span className={pos <= 3 ? "font-semibold text-foreground" : ""}>
                       {pos}위
                     </span>
                   </td>
@@ -167,7 +176,7 @@ export default function BasicsPage() {
 
       {/* DRS & 타이어 */}
       <Section title="DRS & 타이어">
-        <h4 className="text-base font-semibold text-[var(--color-text-primary)] mb-2">
+        <h4 className="text-base font-semibold text-foreground mb-2">
           DRS (Drag Reduction System)
         </h4>
         <p>
@@ -179,7 +188,7 @@ export default function BasicsPage() {
           레이스 시작 후 처음 2바퀴와 세이프티카 직후에는 DRS를 사용할 수 없습니다.
         </p>
 
-        <h4 className="text-base font-semibold text-[var(--color-text-primary)] mt-6 mb-2">
+        <h4 className="text-base font-semibold text-foreground mt-6 mb-2">
           타이어 컴파운드
         </h4>
         <p>
@@ -239,10 +248,10 @@ function Section({
 }) {
   return (
     <section className="mb-10">
-      <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-4 pb-2 border-b border-[var(--color-border-secondary)]">
+      <h2 className="text-xl font-bold text-foreground mb-4 pb-2 border-b border-border">
         {title}
       </h2>
-      <div className="space-y-3 text-[var(--color-text-secondary)] leading-relaxed">
+      <div className="space-y-3 text-muted-foreground leading-relaxed">
         {children}
       </div>
     </section>
@@ -251,7 +260,7 @@ function Section({
 
 function InfoBox({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-4 p-4 rounded-lg bg-[var(--color-info)]/10 border border-[var(--color-info)]/20 text-sm text-[var(--color-text-secondary)] leading-relaxed">
+    <div className="mt-4 p-4 rounded-lg bg-blue-50 border border-blue-200 text-sm text-muted-foreground leading-relaxed">
       {children}
     </div>
   );
@@ -275,10 +284,10 @@ function FlagItem({
         style={className ? undefined : { backgroundColor: color }}
       />
       <div>
-        <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <h4 className="text-sm font-semibold text-foreground">
           {name}
         </h4>
-        <p className="text-sm text-[var(--color-text-secondary)]">{children}</p>
+        <p className="text-sm text-muted-foreground">{children}</p>
       </div>
     </div>
   );
@@ -294,17 +303,17 @@ function TyreCard({
   desc: string;
 }) {
   return (
-    <div className="p-3 rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border-secondary)]">
+    <div className="p-3 rounded-lg bg-muted border border-border">
       <div className="flex items-center gap-2 mb-1.5">
         <div
           className="w-3 h-3 rounded-full"
           style={{ backgroundColor: color }}
         />
-        <span className="text-sm font-semibold text-[var(--color-text-primary)]">
+        <span className="text-sm font-semibold text-foreground">
           {name}
         </span>
       </div>
-      <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+      <p className="text-xs text-muted-foreground leading-relaxed">
         {desc}
       </p>
     </div>

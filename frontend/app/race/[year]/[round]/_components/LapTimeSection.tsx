@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { LapTimeChart } from "@/components/charts/LapTimeChart";
-import { Skeleton } from "@/components/ui/Skeleton";
 import type { LapData } from "@/types/race";
 
 const BASE_URL =
@@ -29,14 +28,14 @@ export function LapTimeChartSection({ year, round }: LapTimeChartSectionProps) {
 
   if (error) {
     return (
-      <p className="text-sm text-[var(--color-text-tertiary)]">
+      <p className="text-sm text-muted-foreground">
         랩 타임 데이터를 불러올 수 없습니다.
       </p>
     );
   }
 
   if (!laps) {
-    return <Skeleton className="w-full h-[350px]" />;
+    return <div className="animate-pulse bg-muted rounded w-full h-[350px]" />;
   }
 
   // Extract unique drivers

@@ -34,9 +34,9 @@ function CustomTooltip({ active, payload, label }: any) {
   return (
     <div
       style={{
-        backgroundColor: "var(--color-bg-elevated)",
-        border: "1px solid var(--color-border-primary)",
-        borderRadius: "var(--radius-md)",
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius)",
         padding: "8px 12px",
         fontSize: "12px",
         maxHeight: 280,
@@ -45,7 +45,7 @@ function CustomTooltip({ active, payload, label }: any) {
     >
       <p
         style={{
-          color: "var(--color-text-secondary)",
+          color: "var(--muted-foreground)",
           marginBottom: 4,
           fontWeight: 600,
         }}
@@ -83,7 +83,7 @@ function CustomTooltip({ active, payload, label }: any) {
           </span>
           <span
             style={{
-              color: "var(--color-text-primary)",
+              color: "var(--foreground)",
               fontVariantNumeric: "tabular-nums",
             }}
           >
@@ -186,16 +186,16 @@ export function GapChart({ drivers, className }: GapChartProps) {
           </defs>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="var(--color-border-secondary)"
+            stroke="var(--border)"
             vertical={false}
           />
           <XAxis
             dataKey="lap"
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
           />
           <YAxis
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
             tickFormatter={(v: number) => `${v.toFixed(0)}s`}
           />
@@ -213,7 +213,7 @@ export function GapChart({ drivers, className }: GapChartProps) {
                 r: 4,
                 stroke: teamColorVar(d.team_colour),
                 strokeWidth: 2,
-                fill: "var(--color-bg-primary)",
+                fill: "var(--background)",
               }}
             />
           ))}

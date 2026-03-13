@@ -23,11 +23,11 @@ const COMPOUND_LABELS: Record<TyreCompound, string> = {
 };
 
 const COMPOUND_COLORS: Record<TyreCompound, string> = {
-  SOFT: "var(--color-tyre-soft)",
-  MEDIUM: "var(--color-tyre-medium)",
-  HARD: "var(--color-tyre-hard)",
-  INTERMEDIATE: "var(--color-tyre-intermediate)",
-  WET: "var(--color-tyre-wet)",
+  SOFT: "#FF3333",
+  MEDIUM: "#FFD700",
+  HARD: "#F0F0F0",
+  INTERMEDIATE: "#43B02A",
+  WET: "#0072CE",
 };
 
 export interface LapTimeChartProps {
@@ -51,16 +51,16 @@ function CustomTooltip({ active, payload, label }: any) {
   return (
     <div
       style={{
-        backgroundColor: "var(--color-bg-elevated)",
-        border: "1px solid var(--color-border-primary)",
-        borderRadius: "var(--radius-md)",
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius)",
         padding: "8px 12px",
         fontSize: "12px",
       }}
     >
       <p
         style={{
-          color: "var(--color-text-secondary)",
+          color: "var(--muted-foreground)",
           marginBottom: 4,
           fontWeight: 600,
         }}
@@ -97,7 +97,7 @@ function CustomTooltip({ active, payload, label }: any) {
             <span style={{ color: entry.stroke, fontWeight: 600, minWidth: 32 }}>
               {acronym}
             </span>
-            <span style={{ color: "var(--color-text-primary)" }}>
+            <span style={{ color: "var(--foreground)" }}>
               {formatLapTime(entry.value)}
             </span>
             {compound && (
@@ -116,12 +116,12 @@ function CustomTooltip({ active, payload, label }: any) {
               </span>
             )}
             {tyreAge != null && (
-              <span style={{ color: "var(--color-text-muted)", fontSize: 10 }}>
+              <span style={{ color: "var(--muted-foreground)", fontSize: 10 }}>
                 ({tyreAge}L)
               </span>
             )}
             {isPit && (
-              <span style={{ color: "var(--color-warning)", fontSize: 10 }}>
+              <span style={{ color: "#f59e0b", fontSize: 10 }}>
                 PIT
               </span>
             )}
@@ -232,22 +232,22 @@ export function LapTimeChart({
         <ComposedChart data={chartData}>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="var(--color-border-secondary)"
+            stroke="var(--border)"
             vertical={false}
           />
           <XAxis
             dataKey="lap"
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
             label={{
               value: "Lap",
               position: "insideBottomRight",
               offset: -5,
-              style: { fill: "var(--color-text-muted)", fontSize: 11 },
+              style: { fill: "var(--muted-foreground)", fontSize: 11 },
             }}
           />
           <YAxis
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
             tickFormatter={(v: number) => formatLapTime(v)}
             domain={["auto", "auto"]}
@@ -255,21 +255,21 @@ export function LapTimeChart({
               value: "Time",
               angle: -90,
               position: "insideLeft",
-              style: { fill: "var(--color-text-muted)", fontSize: 11 },
+              style: { fill: "var(--muted-foreground)", fontSize: 11 },
             }}
           />
           <Tooltip content={<CustomTooltip />} />
           {showMedian && medianTime != null && (
             <ReferenceLine
               y={medianTime}
-              stroke="var(--color-text-muted)"
+              stroke="var(--muted-foreground)"
               strokeDasharray="5 5"
               strokeWidth={1}
               label={{
                 value: `Median: ${formatLapTime(medianTime)}`,
                 position: "insideTopRight",
                 style: {
-                  fill: "var(--color-text-muted)",
+                  fill: "var(--muted-foreground)",
                   fontSize: 10,
                 },
               }}
@@ -288,7 +288,7 @@ export function LapTimeChart({
                 r: 4,
                 stroke: teamColorVar(d.teamColour),
                 strokeWidth: 2,
-                fill: "var(--color-bg-primary)",
+                fill: "var(--background)",
               }}
             />
           ))}

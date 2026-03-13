@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/layout/PageHeader";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "2024 F1 팀 소개 | APEX",
@@ -140,20 +140,29 @@ const teams: Team[] = [
 export default function TeamsPage() {
   return (
     <div>
-      <PageHeader
-        title="2024 시즌 팀 소개"
-        subtitle="Formula 1을 구성하는 10개 팀을 소개합니다"
-        breadcrumbs={[
-          { label: "가이드", href: "/guide" },
-          { label: "팀 소개" },
-        ]}
-      />
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+        <Link href="/guide" className="hover:text-foreground transition-colors">가이드</Link>
+        <span>/</span>
+        <span className="text-foreground">팀 소개</span>
+      </nav>
+
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-1 h-5 bg-primary" />
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
+            2024 시즌 팀 소개
+          </h1>
+        </div>
+        <p className="text-muted-foreground ml-4">Formula 1을 구성하는 10개 팀을 소개합니다</p>
+      </div>
 
       <div className="space-y-4">
         {teams.map((team) => (
           <div
             key={team.name}
-            className="rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-primary)] overflow-hidden"
+            className="rounded-lg bg-card border border-border overflow-hidden"
           >
             {/* Team color accent bar */}
             <div
@@ -165,15 +174,15 @@ export default function TeamsPage() {
               {/* Header */}
               <div className="flex items-start justify-between gap-4 mb-3">
                 <div>
-                  <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                  <h3 className="text-lg font-bold text-foreground">
                     {team.name}
                   </h3>
-                  <p className="text-xs text-[var(--color-text-tertiary)]">
+                  <p className="text-xs text-muted-foreground">
                     {team.fullName}
                   </p>
                 </div>
                 {team.championships > 0 && (
-                  <span className="shrink-0 px-2 py-0.5 text-xs font-semibold rounded bg-[var(--color-p1)]/15 text-[var(--color-p1)] border border-[var(--color-p1)]/30">
+                  <span className="shrink-0 px-2 py-0.5 text-xs font-semibold rounded bg-amber-100 text-amber-700 border border-amber-200">
                     {team.championships}x Champion
                   </span>
                 )}
@@ -191,16 +200,16 @@ export default function TeamsPage() {
               </div>
 
               {/* Description */}
-              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-3">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                 {team.desc}
               </p>
 
               {/* Recent form */}
-              <div className="p-3 rounded-md bg-[var(--color-bg-tertiary)]">
-                <span className="text-xs font-medium text-[var(--color-text-tertiary)] uppercase tracking-wider">
+              <div className="p-3 rounded-md bg-muted">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   최근 성적
                 </span>
-                <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {team.recentForm}
                 </p>
               </div>
@@ -215,8 +224,8 @@ export default function TeamsPage() {
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="text-xs text-[var(--color-text-tertiary)]">{label}</span>
-      <p className="text-sm text-[var(--color-text-primary)] mt-0.5">{value}</p>
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <p className="text-sm text-foreground mt-0.5">{value}</p>
     </div>
   );
 }

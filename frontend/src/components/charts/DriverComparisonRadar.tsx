@@ -44,16 +44,16 @@ function CustomTooltip({ active, payload }: any) {
   return (
     <div
       style={{
-        backgroundColor: "var(--color-bg-elevated)",
-        border: "1px solid var(--color-border-primary)",
-        borderRadius: "var(--radius-md)",
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius)",
         padding: "6px 10px",
         fontSize: "12px",
       }}
     >
       <p
         style={{
-          color: "var(--color-text-secondary)",
+          color: "var(--muted-foreground)",
           fontWeight: 600,
           marginBottom: 2,
         }}
@@ -82,7 +82,7 @@ function CustomTooltip({ active, payload }: any) {
           <span style={{ color: entry.fill || entry.stroke, fontWeight: 600 }}>
             {entry.name}
           </span>
-          <span style={{ color: "var(--color-text-primary)" }}>
+          <span style={{ color: "var(--foreground)" }}>
             {entry.value}
           </span>
         </div>
@@ -117,11 +117,11 @@ export function DriverComparisonRadar({
           <span className="text-sm font-bold" style={{ color: color1 }}>
             {driver1.name_acronym}
           </span>
-          <span className="text-xs text-[var(--color-text-muted)]">
+          <span className="text-xs text-muted-foreground">
             {driver1.full_name}
           </span>
         </div>
-        <span className="text-[var(--color-text-muted)] text-xs">vs</span>
+        <span className="text-muted-foreground text-xs">vs</span>
         <div className="flex items-center gap-2">
           <span
             className="w-3 h-3 rounded-full inline-block"
@@ -130,7 +130,7 @@ export function DriverComparisonRadar({
           <span className="text-sm font-bold" style={{ color: color2 }}>
             {driver2.name_acronym}
           </span>
-          <span className="text-xs text-[var(--color-text-muted)]">
+          <span className="text-xs text-muted-foreground">
             {driver2.full_name}
           </span>
         </div>
@@ -139,13 +139,13 @@ export function DriverComparisonRadar({
       <ResponsiveContainer width="100%" height={350} minHeight={280}>
         <RadarChart data={chartData} cx="50%" cy="50%" outerRadius="75%">
           <PolarGrid
-            stroke="var(--color-border-secondary)"
+            stroke="var(--border)"
             gridType="polygon"
           />
           <PolarAngleAxis
             dataKey="axis"
             tick={{
-              fill: "var(--color-text-tertiary)",
+              fill: "var(--muted-foreground)",
               fontSize: 11,
               fontWeight: 500,
             }}
@@ -153,7 +153,7 @@ export function DriverComparisonRadar({
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fontSize: 9, fill: "var(--color-text-muted)" }}
+            tick={{ fontSize: 9, fill: "var(--muted-foreground)" }}
             axisLine={false}
             tickCount={5}
           />

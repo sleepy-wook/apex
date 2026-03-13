@@ -225,3 +225,46 @@ CREATE TABLE IF NOT EXISTS drivers (
 
 CREATE INDEX idx_drivers_year ON drivers(year);
 CREATE INDEX idx_drivers_team ON drivers(team_name);
+
+
+-- -----------------------------------------------------------------------------
+-- 11. circuits (서킷 정보 — 시드 데이터)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS circuits (
+    circuit_key     INTEGER PRIMARY KEY,
+    circuit_short_name TEXT NOT NULL,
+    circuit_full_name TEXT,
+    country_name    TEXT,
+    country_code    TEXT,
+    city            TEXT,
+    track_length_km NUMERIC(5,3),
+    turns           INTEGER,
+    drs_zones       INTEGER,
+    first_gp_year   INTEGER,
+    lap_record_time TEXT,
+    lap_record_driver TEXT,
+    lap_record_year INTEGER,
+    latitude        NUMERIC(9,6),
+    longitude       NUMERIC(9,6),
+    created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_circuits_country ON circuits(country_name);
+
+
+-- -----------------------------------------------------------------------------
+-- 12. team_details (팀 상세 정보 — 시드 데이터)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS team_details (
+    team_name       TEXT PRIMARY KEY,
+    full_name       TEXT,
+    base_city       TEXT,
+    base_country    TEXT,
+    founded_year    INTEGER,
+    engine_supplier TEXT,
+    team_principal  TEXT,
+    world_championships INTEGER DEFAULT 0,
+    created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_team_details_name ON team_details(team_name);

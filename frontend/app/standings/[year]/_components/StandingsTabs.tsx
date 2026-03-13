@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { DriverStandingsTable } from "./DriverStandingsTable";
 import { ConstructorStandingsTable } from "./ConstructorStandingsTable";
 import type { DriverStanding, ConstructorStanding } from "@/types/standing";
@@ -28,7 +27,7 @@ export function StandingsTabs({
   return (
     <div>
       {/* Tab buttons */}
-      <div className="flex gap-1 mb-6 bg-[var(--color-bg-secondary)] p-1 rounded-lg w-fit border border-[var(--color-border-primary)]">
+      <div className="flex gap-1 mb-6 bg-secondary p-1 rounded-lg w-fit border border-border">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -36,8 +35,8 @@ export function StandingsTabs({
             className={cn(
               "px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
               activeTab === tab.key
-                ? "bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] shadow-sm"
-                : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             {tab.label}
@@ -46,15 +45,15 @@ export function StandingsTabs({
       </div>
 
       {/* Tab content */}
-      <Card padding="none">
+      <div className="border border-border bg-card">
         <div className="p-4 sm:p-6">
-          <CardHeader>
-            <CardTitle>
+          <div className="mb-4">
+            <h2 className="font-display text-lg font-bold text-foreground">
               {activeTab === "drivers"
                 ? "드라이버 챔피언십"
                 : "컨스트럭터 챔피언십"}
-            </CardTitle>
-          </CardHeader>
+            </h2>
+          </div>
 
           {activeTab === "drivers" ? (
             <DriverStandingsTable standings={driverStandings} />
@@ -62,7 +61,7 @@ export function StandingsTabs({
             <ConstructorStandingsTable standings={constructorStandings} />
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

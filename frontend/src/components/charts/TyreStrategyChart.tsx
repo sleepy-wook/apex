@@ -5,11 +5,11 @@ import type { PitStrategy, TyreCompound } from "@/types/race";
 import { teamColorVar } from "@/lib/utils";
 
 const tyreColors: Record<string, string> = {
-  SOFT: "var(--color-tyre-soft)",
-  MEDIUM: "var(--color-tyre-medium)",
-  HARD: "var(--color-tyre-hard)",
-  INTERMEDIATE: "var(--color-tyre-intermediate)",
-  WET: "var(--color-tyre-wet)",
+  SOFT: "#FF3333",
+  MEDIUM: "#FFD700",
+  HARD: "#F0F0F0",
+  INTERMEDIATE: "#43B02A",
+  WET: "#0072CE",
 };
 
 const COMPOUND_SHORT: Record<TyreCompound, string> = {
@@ -93,7 +93,7 @@ export function TyreStrategyChart({
             </div>
 
             {/* Stint bars with pit stop markers */}
-            <div className="flex-1 relative h-7 rounded overflow-hidden bg-[var(--color-bg-tertiary)]">
+            <div className="flex-1 relative h-7 rounded overflow-hidden bg-secondary">
               {driver.stints.map((stint, idx) => {
                 const widthPct =
                   ((stint.lap_end - stint.lap_start + 1) / totalLaps) * 100;
@@ -147,7 +147,7 @@ export function TyreStrategyChart({
                     style={{
                       left: `${leftPct}%`,
                       width: 2,
-                      backgroundColor: "var(--color-bg-primary)",
+                      backgroundColor: "var(--background)",
                       opacity: 0.8,
                     }}
                   />
@@ -157,7 +157,7 @@ export function TyreStrategyChart({
 
             {/* Pit count */}
             <div className="w-6 shrink-0 text-center">
-              <span className="text-[10px] text-[var(--color-text-muted)]">
+              <span className="text-[10px] text-muted-foreground">
                 {driver.pit_stops.length}
               </span>
             </div>
@@ -168,7 +168,7 @@ export function TyreStrategyChart({
       {/* Lap scale */}
       <div className="flex items-center gap-2 mt-2">
         <div className="w-10" />
-        <div className="flex-1 flex justify-between text-[10px] text-[var(--color-text-muted)]">
+        <div className="flex-1 flex justify-between text-[10px] text-muted-foreground">
           <span>1</span>
           <span>{Math.round(totalLaps / 4)}</span>
           <span>{Math.round(totalLaps / 2)}</span>
@@ -193,7 +193,7 @@ export function TyreStrategyChart({
                   className="w-3 h-3 rounded-full inline-block"
                   style={{ backgroundColor: tyreColors[compound] }}
                 />
-                <span className="text-[10px] text-[var(--color-text-muted)] capitalize">
+                <span className="text-[10px] text-muted-foreground capitalize">
                   {compound.toLowerCase()}
                 </span>
               </div>
@@ -209,9 +209,9 @@ export function TyreStrategyChart({
           style={{
             left: tooltip.x,
             top: tooltip.y,
-            backgroundColor: "var(--color-bg-elevated)",
-            border: "1px solid var(--color-border-primary)",
-            borderRadius: "var(--radius-md)",
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--radius)",
             padding: "6px 10px",
             fontSize: "11px",
             whiteSpace: "nowrap",
@@ -226,17 +226,17 @@ export function TyreStrategyChart({
               }}
             />
             <span
-              style={{ fontWeight: 700, color: "var(--color-text-primary)" }}
+              style={{ fontWeight: 700, color: "var(--foreground)" }}
             >
               {tooltip.content.compound}
             </span>
           </div>
-          <div style={{ color: "var(--color-text-secondary)" }}>
+          <div style={{ color: "var(--muted-foreground)" }}>
             Laps {tooltip.content.lapStart} - {tooltip.content.lapEnd} (
             {tooltip.content.stintLaps} laps)
           </div>
           {tooltip.content.tyreAgeAtStart > 0 && (
-            <div style={{ color: "var(--color-text-muted)" }}>
+            <div style={{ color: "var(--muted-foreground)" }}>
               Tyre age at start: {tooltip.content.tyreAgeAtStart}L
             </div>
           )}

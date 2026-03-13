@@ -1,37 +1,59 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Oswald } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { getSeasons } from "@/lib/api";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const oswald = Oswald({
   subsets: ["latin"],
+  variable: "--font-oswald",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "APEX — F1 데이터 플랫폼",
-  description: "한국 F1 팬을 위한 데이터 분석 플랫폼. 레이스 리뷰, 텔레메트리 비교, 타이어 전략 분석을 한국어로 제공합니다.",
+  title: "APEX | 한국 F1 팬 사이트",
+  description:
+    "한국 F1 팬들을 위한 커뮤니티 - 최신 레이스 결과, 드라이버 순위, 컨스트럭터 챔피언십",
+  keywords: ["F1", "포뮬러 원", "한국", "Formula 1", "레이싱", "APEX"],
 };
 
-export default function RootLayout({
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let seasons: number[] = [];
+  try {
+    const data = await getSeasons();
+    seasons = data.seasons;
+  } catch {
+    // API unavailable — fallback
+  }
+
+  const latestYear = seasons[0] ?? new Date().getFullYear();
+
   return (
-    <html lang="ko" className="dark">
+    <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${inter.variable} ${oswald.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
-        <Header />
+        <Header seasons={seasons} latestYear={latestYear} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer latestYear={latestYear} />
+        <Analytics />
       </body>
     </html>
   );

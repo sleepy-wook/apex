@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { PositionChart } from "@/components/charts/PositionChart";
-import { Skeleton } from "@/components/ui/Skeleton";
 import type { PositionData } from "@/types/race";
 
 const BASE_URL =
@@ -34,14 +33,14 @@ export function PositionChartSection({
 
   if (error) {
     return (
-      <p className="text-sm text-[var(--color-text-tertiary)]">
+      <p className="text-sm text-muted-foreground">
         포지션 데이터를 불러올 수 없습니다.
       </p>
     );
   }
 
   if (!positions) {
-    return <Skeleton className="w-full h-[400px]" />;
+    return <div className="animate-pulse bg-muted rounded w-full h-[400px]" />;
   }
 
   return (

@@ -43,10 +43,10 @@ const guides = [
 export default function GuidePage() {
   return (
     <div>
-      <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)] mb-2">
+      <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
         F1 입문 가이드
       </h1>
-      <p className="text-[var(--color-text-secondary)] mb-8">
+      <p className="text-muted-foreground mb-8">
         F1을 처음 접하시나요? 여기서부터 시작하세요.
       </p>
 
@@ -57,18 +57,18 @@ export default function GuidePage() {
             <Link
               key={g.href}
               href={g.href}
-              className="group block p-5 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-primary)] hover:border-[var(--color-border-hover)] hover:bg-[var(--color-bg-hover)] transition-colors"
+              className="group block p-5 rounded-lg bg-card border border-border hover:border-primary/50 hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center gap-3 mb-2">
                 <Icon
                   size={20}
-                  className="text-[var(--color-text-tertiary)] group-hover:text-[var(--color-text-secondary)] transition-colors"
+                  className="text-muted-foreground group-hover:text-foreground transition-colors"
                 />
-                <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                <h2 className="text-lg font-semibold text-foreground">
                   {g.title}
                 </h2>
               </div>
-              <p className="text-sm text-[var(--color-text-secondary)]">
+              <p className="text-sm text-muted-foreground">
                 {g.desc}
               </p>
             </Link>

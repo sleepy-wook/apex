@@ -59,9 +59,9 @@ function CustomTooltip({ active, payload, label }: any) {
   return (
     <div
       style={{
-        backgroundColor: "var(--color-bg-elevated)",
-        border: "1px solid var(--color-border-primary)",
-        borderRadius: "var(--radius-md)",
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius)",
         padding: "8px 12px",
         fontSize: "12px",
         maxHeight: 320,
@@ -70,7 +70,7 @@ function CustomTooltip({ active, payload, label }: any) {
     >
       <p
         style={{
-          color: "var(--color-text-secondary)",
+          color: "var(--muted-foreground)",
           marginBottom: 4,
           fontWeight: 600,
         }}
@@ -89,7 +89,7 @@ function CustomTooltip({ active, payload, label }: any) {
         >
           <span
             style={{
-              color: "var(--color-text-muted)",
+              color: "var(--muted-foreground)",
               fontVariantNumeric: "tabular-nums",
               minWidth: 22,
               textAlign: "right",
@@ -196,7 +196,7 @@ export function PositionChart({
                     border: `1px solid ${EVENT_BORDER[type]}`,
                   }}
                 />
-                <span style={{ color: "var(--color-text-muted)" }}>
+                <span style={{ color: "var(--muted-foreground)" }}>
                   {type === "SC"
                     ? "Safety Car"
                     : type === "VSC"
@@ -215,7 +215,7 @@ export function PositionChart({
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="var(--color-border-secondary)"
+            stroke="var(--border)"
             vertical={false}
           />
 
@@ -245,13 +245,13 @@ export function PositionChart({
 
           <XAxis
             dataKey="lap"
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
           />
           <YAxis
             reversed
             domain={[1, Math.max(driverCount, 20)]}
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
             tickFormatter={(v: number) => `P${v}`}
             allowDecimals={false}
@@ -269,7 +269,7 @@ export function PositionChart({
                 r: 4,
                 stroke: teamColorVar(driver.team_colour),
                 strokeWidth: 2,
-                fill: "var(--color-bg-primary)",
+                fill: "var(--background)",
               }}
               label={
                 // Show driver acronym at the last data point

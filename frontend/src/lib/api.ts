@@ -12,6 +12,9 @@ import type {
   StandingsProgression,
 } from "@/types/standing";
 import type { Driver, HeadToHead } from "@/types/driver";
+import type { ScheduleEvent } from "@/types/schedule";
+import type { Team } from "@/types/team";
+import type { Circuit, CircuitDetail } from "@/types/circuit";
 
 // ---------------------------------------------------------------------------
 // Base URL — reads from env at build time (Next.js public env)
@@ -215,6 +218,44 @@ export async function getHeadToHead(
   constructorId: string,
 ): Promise<HeadToHead> {
   return apiFetch(`/head-to-head/${year}/${constructorId}`);
+}
+
+// ---------------------------------------------------------------------------
+// Schedule
+// ---------------------------------------------------------------------------
+
+/** Full season schedule with all sessions (FP1~Race) grouped by event */
+export async function getSchedule(
+  year: number,
+): Promise<{ year: number; events: ScheduleEvent[] }> {
+  return apiFetch(`/schedule/${year}`);
+}
+
+// ---------------------------------------------------------------------------
+// Teams
+// ---------------------------------------------------------------------------
+
+/** Team list with constructor standings + drivers */
+export async function getTeams(
+  year: number,
+): Promise<{ year: number; round: number; teams: Team[] }> {
+  return apiFetch(`/teams/${year}`);
+}
+
+// ---------------------------------------------------------------------------
+// Circuits
+// ---------------------------------------------------------------------------
+
+/** All circuits list */
+export async function getCircuits(): Promise<{ circuits: Circuit[] }> {
+  return apiFetch("/circuits");
+}
+
+/** Circuit detail with past race history */
+export async function getCircuitDetail(
+  circuitKey: number,
+): Promise<CircuitDetail> {
+  return apiFetch(`/circuits/${circuitKey}`);
 }
 
 // ---------------------------------------------------------------------------

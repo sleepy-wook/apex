@@ -32,9 +32,9 @@ function CustomTooltip({ active, payload, label, roundLabels }: any) {
   return (
     <div
       style={{
-        backgroundColor: "var(--color-bg-elevated)",
-        border: "1px solid var(--color-border-primary)",
-        borderRadius: "var(--radius-md)",
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius)",
         padding: "8px 12px",
         fontSize: "12px",
         maxHeight: 360,
@@ -43,14 +43,14 @@ function CustomTooltip({ active, payload, label, roundLabels }: any) {
     >
       <p
         style={{
-          color: "var(--color-text-secondary)",
+          color: "var(--muted-foreground)",
           marginBottom: 4,
           fontWeight: 600,
         }}
       >
         Round {label}
         {roundLabel && (
-          <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>
+          <span style={{ color: "var(--muted-foreground)", fontWeight: 400 }}>
             {" "}
             - {roundLabel}
           </span>
@@ -83,7 +83,7 @@ function CustomTooltip({ active, payload, label, roundLabels }: any) {
           </span>
           <span
             style={{
-              color: "var(--color-text-primary)",
+              color: "var(--foreground)",
               fontVariantNumeric: "tabular-nums",
             }}
           >
@@ -178,12 +178,12 @@ export function PointsProgressionChart({
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="var(--color-border-secondary)"
+            stroke="var(--border)"
             vertical={false}
           />
           <XAxis
             dataKey="round"
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
             tickFormatter={(v: number) => {
               if (roundLabels?.[v]) {
@@ -197,17 +197,17 @@ export function PointsProgressionChart({
               value: "Round",
               position: "insideBottomRight",
               offset: -5,
-              style: { fill: "var(--color-text-muted)", fontSize: 11 },
+              style: { fill: "var(--muted-foreground)", fontSize: 11 },
             }}
           />
           <YAxis
-            stroke="var(--color-text-tertiary)"
+            stroke="var(--muted-foreground)"
             tick={{ fontSize: 12 }}
             label={{
               value: "Points",
               angle: -90,
               position: "insideLeft",
-              style: { fill: "var(--color-text-muted)", fontSize: 11 },
+              style: { fill: "var(--muted-foreground)", fontSize: 11 },
             }}
           />
           <Tooltip
@@ -230,7 +230,7 @@ export function PointsProgressionChart({
                 r: 5,
                 stroke: teamColorVar(d.team_colour),
                 strokeWidth: 2,
-                fill: "var(--color-bg-primary)",
+                fill: "var(--background)",
               }}
             />
           ))}
