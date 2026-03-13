@@ -18,10 +18,10 @@ import json
 # -----------------------------------------------------------------------------
 # Supabase 연결 설정 (Databricks Secret Scope 사용)
 # -----------------------------------------------------------------------------
-DB_HOST = "db.mpvrekmlokgmmbzhcleo.supabase.co"
-DB_PORT = 5432
+DB_HOST = "aws-1-us-east-1.pooler.supabase.com"
+DB_PORT = 6543
 DB_NAME = "postgres"
-DB_USER = "postgres"
+DB_USER = "postgres.mpvrekmlokgmmbzhcleo"
 DB_PASS = "Wookie1143ok!"
 
 

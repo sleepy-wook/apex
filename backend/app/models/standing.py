@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class DriverStanding(BaseModel):
-    position: int
+    position: int | None
     driver_id: str
     driver_name: str
     name_acronym: str
@@ -19,7 +19,7 @@ class DriverStandingsResponse(BaseModel):
 
 
 class ConstructorStanding(BaseModel):
-    position: int
+    position: int | None
     constructor_id: str
     constructor_name: str
     team_colour: str

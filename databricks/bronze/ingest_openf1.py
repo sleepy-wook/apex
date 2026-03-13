@@ -51,6 +51,7 @@ def save_to_bronze(data, table_name, partition_cols=None):
     """
     JSON 리스트 → Spark DataFrame → Delta Table 저장.
     segments_sector_* 배열은 JSON string으로 변환하여 호환성 보장.
+    year 파티션이 있으면 replaceWhere로 해당 연도만 교체 (기존 데이터 보존).
     """
     if not data:
         print(f"[SKIP] {table_name}: 데이터 없음")
@@ -78,10 +79,31 @@ def save_to_bronze(data, table_name, partition_cols=None):
     df = spark.createDataFrame(pdf)
     path = f"{S3.BRONZE_PATH}/{table_name}"
 
-    writer = df.write.format("delta").mode("overwrite")
-    if partition_cols:
-        writer = writer.partitionBy(*partition_cols)
-    writer.save(path)
+    # 기존 테이블 존재 여부 확인
+    try:
+        spark.read.format("delta").load(path)
+        table_exists = True
+    except Exception:
+        table_exists = False
+
+    if table_exists and partition_cols and "year" in partition_cols:
+        # 해당 연도 파티션만 교체 (기존 다른 연도 데이터 보존)
+        years = [r["year"] for r in df.select("year").distinct().collect()]
+        year_filter = " OR ".join([f"year = {y}" for y in years])
+        writer = (
+            df.write.format("delta")
+            .mode("overwrite")
+            .option("replaceWhere", year_filter)
+        )
+        if partition_cols:
+            writer = writer.partitionBy(*partition_cols)
+        writer.save(path)
+    else:
+        # 최초 저장 또는 파티션 없는 경우 전체 overwrite
+        writer = df.write.format("delta").mode("overwrite")
+        if partition_cols:
+            writer = writer.partitionBy(*partition_cols)
+        writer.save(path)
 
     # Unity Catalog 등록
     spark.sql(f"""

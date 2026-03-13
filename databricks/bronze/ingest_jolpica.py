@@ -210,7 +210,7 @@ def ingest_constructor_standings(year):
 # 5. 저장 유틸리티
 # -----------------------------------------------------------------------------
 def save_to_bronze_jolpica(data, table_name, partition_cols=None):
-    """Jolpica 데이터를 Delta Table로 저장."""
+    """Jolpica 데이터를 Delta Table로 저장. year 파티션 단위로 교체."""
     if not data:
         print(f"[SKIP] {table_name}: 데이터 없음")
         return
@@ -218,10 +218,31 @@ def save_to_bronze_jolpica(data, table_name, partition_cols=None):
     df = spark.createDataFrame(data)
     path = f"{S3.BRONZE_PATH}/{table_name}"
 
-    writer = df.write.format("delta").mode("overwrite")
-    if partition_cols:
-        writer = writer.partitionBy(*partition_cols)
-    writer.save(path)
+    # 기존 테이블 존재 여부 확인
+    try:
+        spark.read.format("delta").load(path)
+        table_exists = True
+    except Exception:
+        table_exists = False
+
+    if table_exists and partition_cols and "year" in partition_cols:
+        # 해당 연도 파티션만 교체 (기존 다른 연도 데이터 보존)
+        years = [r["year"] for r in df.select("year").distinct().collect()]
+        year_filter = " OR ".join([f"year = {y}" for y in years])
+        writer = (
+            df.write.format("delta")
+            .mode("overwrite")
+            .option("replaceWhere", year_filter)
+        )
+        if partition_cols:
+            writer = writer.partitionBy(*partition_cols)
+        writer.save(path)
+    else:
+        # 최초 저장 또는 파티션 없는 경우 전체 overwrite
+        writer = df.write.format("delta").mode("overwrite")
+        if partition_cols:
+            writer = writer.partitionBy(*partition_cols)
+        writer.save(path)
 
     # Unity Catalog 등록
     spark.sql(f"""
@@ -264,7 +285,7 @@ def ingest_all(year):
     print(f"{'#'*60}")
 
 
-def ingest_history(start_year=2000, end_year=2025):
+def ingest_history(start_year=1950, end_year=2026):
     """
     역사 데이터 대량 수집.
     Jolpica rate limit 대비 연도 간 2초 sleep.
