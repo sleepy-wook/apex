@@ -14,6 +14,24 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import IntegerType, DoubleType
 
 
+def safe_int(col_name, alias=None):
+    """빈/None 문자열을 null 처리 후 IntegerType 캐스팅."""
+    str_col = F.col(col_name).cast("string")
+    c = F.when(
+        str_col.isNull() | (str_col == "") | (str_col == "None"), None
+    ).otherwise(str_col).cast(IntegerType())
+    return c.alias(alias or col_name)
+
+
+def safe_double(col_name, alias=None):
+    """빈/None 문자열을 null 처리 후 DoubleType 캐스팅."""
+    str_col = F.col(col_name).cast("string")
+    c = F.when(
+        str_col.isNull() | (str_col == "") | (str_col == "None"), None
+    ).otherwise(str_col).cast(DoubleType())
+    return c.alias(alias or col_name)
+
+
 # -----------------------------------------------------------------------------
 # 유틸리티
 # -----------------------------------------------------------------------------
@@ -26,7 +44,7 @@ def read_bronze(table_name):
 def save_to_silver(df, table_name, partition_cols=None):
     """Silver Delta Table 저장 + Unity Catalog 등록."""
     path = f"{S3.SILVER_PATH}/{table_name}"
-    writer = df.write.format("delta").mode("overwrite")
+    writer = df.write.format("delta").mode("overwrite").option("overwriteSchema", "true")
     if partition_cols:
         writer = writer.partitionBy(*partition_cols)
     writer.save(path)
@@ -52,23 +70,23 @@ def transform_results():
     df = read_bronze(TABLES.BRONZE_RESULTS)
 
     df_silver = df.select(
-        F.col("year").cast(IntegerType()),
-        F.col("round").cast(IntegerType()),
+        safe_int("year"),
+        safe_int("round"),
         F.col("race_name"),
         F.col("circuit_id"),
         F.col("circuit_name"),
         F.col("race_date"),
-        F.col("number").cast(IntegerType()).alias("driver_number"),
-        F.col("position").cast(IntegerType()),
+        safe_int("number", "driver_number"),
+        safe_int("position"),
         F.col("position_text"),
-        F.col("points").cast(DoubleType()),
-        F.col("grid").cast(IntegerType()),
-        F.col("laps").cast(IntegerType()).alias("laps_completed"),
+        safe_double("points"),
+        safe_int("grid"),
+        safe_int("laps", "laps_completed"),
         F.col("status"),
-        F.col("time_millis").cast(IntegerType()),
+        safe_int("time_millis"),
         F.col("time_text"),
-        F.col("fastest_lap_rank").cast(IntegerType()),
-        F.col("fastest_lap_number").cast(IntegerType()),
+        safe_int("fastest_lap_rank"),
+        safe_int("fastest_lap_number"),
         F.col("fastest_lap_time"),
         # Driver flatten
         F.get_json_object("driver_json", "$.driverId").alias("driver_id"),
@@ -81,8 +99,14 @@ def transform_results():
         F.get_json_object("constructor_json", "$.name").alias("constructor_name"),
         F.get_json_object("constructor_json", "$.nationality").alias("constructor_nationality"),
         # 그리드 대비 순위 변화
-        (F.col("grid").cast(IntegerType()) - F.col("position").cast(IntegerType())).alias("positions_gained"),
-    ).dropDuplicates(["year", "round", "driver_number"])
+        (F.when(
+            F.col("grid").cast("string").isin("", "None") | F.col("grid").isNull(), None
+        ).otherwise(F.col("grid")).cast(IntegerType())
+         - F.when(
+            F.col("position").cast("string").isin("", "None") | F.col("position").isNull(), None
+        ).otherwise(F.col("position")).cast(IntegerType())
+        ).alias("positions_gained"),
+    ).dropDuplicates(["year", "round", "driver_id"])
 
     save_to_silver(df_silver, TABLES.SILVER_RESULTS, partition_cols=["year"])
 
@@ -101,17 +125,23 @@ def transform_driver_standings():
     df = read_bronze(TABLES.BRONZE_DRIVER_STANDINGS)
 
     df_silver = df.select(
-        F.col("year").cast(IntegerType()),
-        F.col("round").cast(IntegerType()),
-        F.col("position").cast(IntegerType()),
-        F.col("points").cast(DoubleType()),
-        F.col("wins").cast(IntegerType()),
+        safe_int("year"),
+        safe_int("round"),
+        safe_int("position"),
+        safe_double("points"),
+        safe_int("wins"),
         # Driver flatten
         F.get_json_object("driver_json", "$.driverId").alias("driver_id"),
         F.get_json_object("driver_json", "$.code").alias("driver_code"),
         F.get_json_object("driver_json", "$.givenName").alias("driver_given_name"),
         F.get_json_object("driver_json", "$.familyName").alias("driver_family_name"),
-        F.get_json_object("driver_json", "$.permanentNumber").cast(IntegerType()).alias("permanent_number"),
+        F.when(
+            (F.get_json_object("driver_json", "$.permanentNumber").isNull()) |
+            (F.get_json_object("driver_json", "$.permanentNumber") == ""),
+            None
+        ).otherwise(
+            F.get_json_object("driver_json", "$.permanentNumber")
+        ).cast(IntegerType()).alias("permanent_number"),
         F.get_json_object("driver_json", "$.nationality").alias("driver_nationality"),
         F.get_json_object("driver_json", "$.dateOfBirth").alias("date_of_birth"),
         # 첫 번째 Constructor
@@ -142,11 +172,11 @@ def transform_constructor_standings():
     df = read_bronze(TABLES.BRONZE_CONSTRUCTOR_STANDINGS)
 
     df_silver = df.select(
-        F.col("year").cast(IntegerType()),
-        F.col("round").cast(IntegerType()),
-        F.col("position").cast(IntegerType()),
-        F.col("points").cast(DoubleType()),
-        F.col("wins").cast(IntegerType()),
+        safe_int("year"),
+        safe_int("round"),
+        safe_int("position"),
+        safe_double("points"),
+        safe_int("wins"),
         # Constructor flatten
         F.get_json_object("constructor_json", "$.constructorId").alias("constructor_id"),
         F.get_json_object("constructor_json", "$.name").alias("constructor_name"),
