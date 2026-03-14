@@ -246,6 +246,7 @@ CREATE TABLE IF NOT EXISTS circuits (
     lap_record_year INTEGER,
     latitude        NUMERIC(9,6),
     longitude       NUMERIC(9,6),
+    track_map_url   TEXT,
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 

@@ -23,6 +23,7 @@ export function Header({ seasons, latestYear }: HeaderProps) {
     { href: `/drivers/${currentYear}`, label: "드라이버" },
     { href: `/teams/${currentYear}`, label: "팀" },
     { href: `/standings/${currentYear}`, label: "순위" },
+    { href: "/circuits", label: "서킷" },
     { href: "/guide", label: "가이드" },
   ]
 

@@ -23,7 +23,8 @@ async def fetch_circuits() -> list[dict]:
                     c.lap_record_driver,
                     c.lap_record_year,
                     c.latitude,
-                    c.longitude
+                    c.longitude,
+                    c.track_map_url
                 FROM circuits c
                 ORDER BY c.country_name, c.circuit_short_name
                 """
@@ -64,7 +65,8 @@ async def _fetch_circuit_detail_impl(conn, circuit_key: int) -> dict | None:
             c.lap_record_driver,
             c.lap_record_year,
             c.latitude,
-            c.longitude
+            c.longitude,
+            c.track_map_url
         FROM circuits c
         WHERE c.circuit_key = $1
         """,

@@ -30,6 +30,7 @@ async def get_circuits() -> dict:
             "lap_record_year": r.get("lap_record_year"),
             "latitude": float(r["latitude"]) if r.get("latitude") else None,
             "longitude": float(r["longitude"]) if r.get("longitude") else None,
+            "track_map_url": r.get("track_map_url"),
         })
     return {"circuits": circuits}
 
@@ -71,5 +72,6 @@ async def get_circuit_detail(circuit_key: int) -> dict | None:
         "lap_record_year": row.get("lap_record_year"),
         "latitude": float(row["latitude"]) if row.get("latitude") else None,
         "longitude": float(row["longitude"]) if row.get("longitude") else None,
+        "track_map_url": row.get("track_map_url"),
         "past_races": past_races,
     }

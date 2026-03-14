@@ -14,6 +14,7 @@ export interface Circuit {
   lap_record_year: number | null;
   latitude: number | null;
   longitude: number | null;
+  track_map_url: string | null;
 }
 
 export interface CircuitPastRace {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getCircuitDetail, getSeasons } from "@/lib/api";
 import { notFound } from "next/navigation";
 import {
@@ -110,21 +111,23 @@ export default async function CircuitDetailPage({
         </p>
       </div>
 
-      {/* Circuit Map */}
-      {circuit.latitude && circuit.longitude && (
+      {/* Circuit Track Map */}
+      {circuit.track_map_url && (
         <div className="border border-border bg-card overflow-hidden mb-8">
           <div className="flex items-center gap-3 px-5 pt-4 mb-3">
             <div className="w-1 h-5 bg-primary" />
             <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground">
-              서킷 위치
+              트랙 레이아웃
             </span>
           </div>
-          <div className="aspect-[2/1] md:aspect-[3/1]">
-            <iframe
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${circuit.longitude - 0.02},${circuit.latitude - 0.01},${circuit.longitude + 0.02},${circuit.latitude + 0.01}&layer=mapnik&marker=${circuit.latitude},${circuit.longitude}`}
-              className="w-full h-full border-0"
-              loading="lazy"
-              title={`${circuit.circuit_short_name} 위치`}
+          <div className="flex items-center justify-center p-6 md:p-10">
+            <Image
+              src={circuit.track_map_url}
+              alt={`${circuit.circuit_short_name} 트랙 레이아웃`}
+              width={800}
+              height={450}
+              className="w-full max-w-2xl h-auto object-contain"
+              priority
             />
           </div>
         </div>

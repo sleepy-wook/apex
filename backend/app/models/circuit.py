@@ -17,6 +17,7 @@ class CircuitListItem(BaseModel):
     lap_record_year: int | None = None
     latitude: float | None = None
     longitude: float | None = None
+    track_map_url: str | None = None
 
 
 class CircuitsResponse(BaseModel):
