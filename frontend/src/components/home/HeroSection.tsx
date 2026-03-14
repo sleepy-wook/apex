@@ -8,6 +8,20 @@ interface HeroSectionProps {
   year: number
 }
 
+function formatRaceDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr)
+    if (isNaN(d.getTime())) return dateStr
+    return d.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  } catch {
+    return dateStr
+  }
+}
+
 export function HeroSection({ summary, podium, year }: HeroSectionProps) {
   if (!summary) {
     return (
@@ -45,7 +59,7 @@ export function HeroSection({ summary, podium, year }: HeroSectionProps) {
           {/* Main Content */}
           <div>
             <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-primary mb-3">
-              라운드 {summary.round} &mdash; {summary.date}
+              라운드 {summary.round} &mdash; {formatRaceDate(summary.date)}
             </p>
 
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1] text-balance">

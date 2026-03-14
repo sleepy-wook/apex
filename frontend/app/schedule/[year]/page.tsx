@@ -180,6 +180,21 @@ function EventCard({
     "Race",
   ];
 
+  // Session label translations
+  const sessionLabel = (name: string | null, type: string | null): string => {
+    const labels: Record<string, string> = {
+      "Practice 1": "연습 1",
+      "Practice 2": "연습 2",
+      "Practice 3": "연습 3",
+      "Qualifying": "예선",
+      "Sprint Qualifying": "스프린트 예선",
+      "Sprint Shootout": "스프린트 슛아웃",
+      "Sprint": "스프린트",
+      "Race": "결승",
+    };
+    return labels[name || ""] || labels[type || ""] || name || type || "";
+  };
+
   const sortedSessions = [...event.sessions].sort((a, b) => {
     if (a.date_start && b.date_start)
       return (
@@ -220,13 +235,13 @@ function EventCard({
               )}
               <div>
                 <p className="text-base font-semibold text-foreground">
-                  {event.country_name} Grand Prix
+                  {event.country_name} 그랑프리
                 </p>
                 <div className="flex items-center gap-3 mt-0.5">
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <MapPin size={10} />
                     {event.circuit_short_name}
-                    {event.location && `, ${event.location}`}
+                    {event.location && event.location !== event.circuit_short_name && `, ${event.location}`}
                   </span>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Calendar size={10} />
@@ -293,7 +308,7 @@ function EventCard({
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
-                  <span>{session.session_name || session.session_type}</span>
+                  <span>{sessionLabel(session.session_name, session.session_type)}</span>
                   {timeStr && (
                     <span className="ml-1.5 opacity-70">
                       {dayStr} {timeStr}

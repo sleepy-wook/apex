@@ -30,7 +30,7 @@ const guides = [
     href: "/guide/teams",
     icon: Users,
     title: "팀 소개",
-    desc: "2024 시즌 10개 팀의 역사, 드라이버, 최근 성적 한눈에 보기",
+    desc: "F1 10개 팀의 역사, 드라이버, 최근 성적 한눈에 보기",
   },
   {
     href: "/guide/media",

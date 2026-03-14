@@ -5,6 +5,9 @@ from app.db.queries import schedule as schedule_queries
 settings = get_settings()
 
 
+TESTING_SESSION_NAMES = {"Day 1", "Day 2", "Day 3"}
+
+
 @cached(
     prefix="schedule",
     ttl=settings.cache_ttl_race,
@@ -13,9 +16,15 @@ settings = get_settings()
 async def get_schedule(year: int) -> dict:
     rows = await schedule_queries.fetch_schedule(year)
 
+    # Filter out pre-season testing sessions
+    race_rows = [
+        r for r in rows
+        if r.get("session_name") not in TESTING_SESSION_NAMES
+    ]
+
     # Group sessions by circuit_key to form GP events
     events_map: dict[int, dict] = {}
-    for r in rows:
+    for r in race_rows:
         circuit_key = r.get("circuit_key") or 0
         if circuit_key not in events_map:
             events_map[circuit_key] = {
@@ -53,5 +62,12 @@ async def get_schedule(year: int) -> dict:
         events_map.values(),
         key=lambda e: e["sessions"][0]["date_start"] or "",
     )
+
+    # Assign round numbers based on date order if missing
+    round_counter = 1
+    for event in events:
+        if not event["round"]:
+            event["round"] = round_counter
+        round_counter += 1
 
     return {"year": year, "events": events}

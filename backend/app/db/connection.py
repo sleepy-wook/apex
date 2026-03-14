@@ -19,6 +19,7 @@ async def init_pool() -> None:
         min_size=settings.db_min_pool_size,
         max_size=settings.db_max_pool_size,
         command_timeout=30,
+        statement_cache_size=0,  # Supabase PgBouncer (transaction mode) 호환
     )
 
 

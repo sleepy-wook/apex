@@ -61,7 +61,7 @@ export function RaceResultTable({ results }: RaceResultTableProps) {
                 </td>
                 <td className="text-center py-3 px-2 hidden sm:table-cell">
                   <span className="text-sm font-mono text-muted-foreground">
-                    {row.pit_count}
+                    {row.pit_count > 0 ? row.pit_count : "-"}
                   </span>
                 </td>
                 <td className="text-right py-3 px-2">
