@@ -1,4 +1,5 @@
 import { HeroSection } from "@/components/home/HeroSection"
+import { NextRaceBanner } from "@/components/home/NextRaceBanner"
 import { RaceResults } from "@/components/home/RaceResults"
 import { DriverStandings } from "@/components/home/DriverStandings"
 import { ConstructorStandings } from "@/components/home/ConstructorStandings"
@@ -10,7 +11,9 @@ import {
   getRaceResults,
   getDriverStandings,
   getConstructorStandings,
+  getSchedule,
 } from "@/lib/api"
+import type { ScheduleEvent } from "@/types/schedule"
 
 export const revalidate = 3600 // 1시간 ISR
 
@@ -59,10 +62,29 @@ export default async function Home() {
     // API unavailable
   }
 
+  // Fetch next race from schedule
+  let nextRace: ScheduleEvent | null = null
+  try {
+    const scheduleData = await getSchedule(year)
+    const now = new Date()
+    const upcoming = scheduleData.events.filter((e) => {
+      const raceSession = e.sessions.find((s) => s.session_type === "Race")
+      return raceSession?.date_start && new Date(raceSession.date_start) > now
+    })
+    if (upcoming.length > 0) {
+      nextRace = upcoming[0]
+    }
+  } catch {
+    // schedule unavailable
+  }
+
   const podium = results.slice(0, 3)
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Next Race Countdown */}
+      {nextRace && <NextRaceBanner event={nextRace} year={year} />}
+
       {/* Hero Section */}
       <HeroSection summary={summary} podium={podium} year={year} />
 

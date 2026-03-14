@@ -166,7 +166,16 @@ apex/
 | 0 | 프로젝트 셋업 (레포, 인프라, 환경) | ✅ 완료 |
 | 1 | Databricks 파이프라인 (Bronze → Silver → Gold) | ✅ 완료 |
 | 2 | Supabase DB 세팅 (스키마 + 인덱스) | ✅ 완료 |
-| 3 | FastAPI 백엔드 (API + Redis) | 🔜 다음 |
-| 4 | Next.js 프론트엔드 (디자인 토큰 → 컴포넌트 → 페이지) | |
+| 3 | FastAPI 백엔드 (API + Redis) | ✅ 완료 |
+| 4 | Next.js 프론트엔드 (디자인 토큰 → 컴포넌트 → 페이지) | ✅ 완료 |
 | 5 | 뉴스 피드 (RSS + 홈 UI) | |
 | 6 | 자동화 (GP 주말 cron + Job 스케줄) | |
+
+---
+
+## 지속 관리 사항
+
+- **CLAUDE.md 업데이트**: 사용자가 중요한 요청을 할 때마다 관련 내용을 CLAUDE.md에 반영할 것
+- **하드코딩 연도 금지**: 연도는 항상 동적으로 (DB 또는 `getSeasons()` API 기준)
+- **한국어 우선**: UI 텍스트는 한국어, 데이터 원문(레이스명, 드라이버명 등)은 영어 유지
+- **next/image 호스트**: 외부 이미지 사용 시 `next.config.ts`의 `remotePatterns`에 호스트 추가 필수

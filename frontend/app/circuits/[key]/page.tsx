@@ -8,7 +8,6 @@ import {
   Gauge,
   Calendar,
   Trophy,
-  Clock,
 } from "lucide-react";
 import { AdSlot } from "@/components/common/AdSlot";
 import { RelatedPages } from "@/components/common/RelatedPages";
@@ -21,7 +20,6 @@ interface CircuitDetailPageProps {
 
 export async function generateMetadata({ params }: CircuitDetailPageProps) {
   const { key } = await params;
-  // We can't fetch data here easily without caching, so use generic title
   return {
     title: `서킷 상세 | APEX`,
     description: `F1 서킷 상세 정보`,
@@ -112,6 +110,26 @@ export default async function CircuitDetailPage({
         </p>
       </div>
 
+      {/* Circuit Map */}
+      {circuit.latitude && circuit.longitude && (
+        <div className="border border-border bg-card overflow-hidden mb-8">
+          <div className="flex items-center gap-3 px-5 pt-4 mb-3">
+            <div className="w-1 h-5 bg-primary" />
+            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground">
+              서킷 위치
+            </span>
+          </div>
+          <div className="aspect-[2/1] md:aspect-[3/1]">
+            <iframe
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${circuit.longitude - 0.02},${circuit.latitude - 0.01},${circuit.longitude + 0.02},${circuit.latitude + 0.01}&layer=mapnik&marker=${circuit.latitude},${circuit.longitude}`}
+              className="w-full h-full border-0"
+              loading="lazy"
+              title={`${circuit.circuit_short_name} 위치`}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <StatCard
@@ -148,7 +166,7 @@ export default async function CircuitDetailPage({
           <div className="flex items-center gap-3 mb-3">
             <div className="w-1 h-5 bg-primary" />
             <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground">
-              Lap Record
+              랩 레코드
             </span>
           </div>
           <div className="flex items-baseline gap-3 ml-4">
@@ -173,7 +191,7 @@ export default async function CircuitDetailPage({
           <div className="flex items-center gap-3 mb-4">
             <div className="w-1 h-5 bg-primary" />
             <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground">
-              Recent Results
+              역대 레이스 기록
             </span>
           </div>
 
@@ -181,41 +199,55 @@ export default async function CircuitDetailPage({
             {/* Table Header */}
             <div className="hidden md:grid grid-cols-[4rem_1fr_10rem_6rem] gap-4 px-5 py-3 border-b border-border bg-muted/30">
               <span className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
-                Year
+                연도
               </span>
               <span className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
-                Winner
+                우승자
               </span>
               <span className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
-                Team
+                팀
               </span>
               <span className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground text-right">
-                Laps
+                랩 수
               </span>
             </div>
 
-            {circuit.past_races.map((race, idx) => (
-              <div
-                key={race.year}
-                className="flex md:grid md:grid-cols-[4rem_1fr_10rem_6rem] items-center gap-3 md:gap-4 px-4 md:px-5 py-3.5 border-b border-border last:border-b-0 hover:bg-muted/30 transition-colors"
-              >
-                <span className="text-sm font-semibold text-foreground tabular-nums">
-                  {race.year}
-                </span>
-                <div className="flex-1 min-w-0 flex items-center gap-2">
-                  <Trophy size={12} className="text-amber-500 shrink-0" />
-                  <span className="text-sm text-foreground truncate">
-                    {race.winner_name || "-"}
+            {circuit.past_races.map((race) => {
+              const raceContent = (
+                <div
+                  className="flex md:grid md:grid-cols-[4rem_1fr_10rem_6rem] items-center gap-3 md:gap-4 px-4 md:px-5 py-3.5 border-b border-border last:border-b-0 hover:bg-muted/30 transition-colors"
+                >
+                  <span className="text-sm font-semibold text-foreground tabular-nums">
+                    {race.year}
+                  </span>
+                  <div className="flex-1 min-w-0 flex items-center gap-2">
+                    <Trophy size={12} className="text-amber-500 shrink-0" />
+                    <span className="text-sm text-foreground truncate">
+                      {race.winner_name || "-"}
+                    </span>
+                  </div>
+                  <span className="hidden md:block text-sm text-muted-foreground truncate">
+                    {race.winner_team || "-"}
+                  </span>
+                  <span className="text-sm text-muted-foreground text-right tabular-nums">
+                    {race.total_laps || "-"}
                   </span>
                 </div>
-                <span className="hidden md:block text-sm text-muted-foreground truncate">
-                  {race.winner_team || "-"}
-                </span>
-                <span className="text-sm text-muted-foreground text-right tabular-nums">
-                  {race.total_laps || "-"}
-                </span>
-              </div>
-            ))}
+              );
+
+              if (race.round) {
+                return (
+                  <Link
+                    key={race.year}
+                    href={`/race/${race.year}/${race.round}`}
+                    className="block"
+                  >
+                    {raceContent}
+                  </Link>
+                );
+              }
+              return <div key={race.year}>{raceContent}</div>;
+            })}
           </div>
         </section>
       )}

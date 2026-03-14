@@ -238,11 +238,22 @@ function EventCard({
                   {event.country_name} 그랑프리
                 </p>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <MapPin size={10} />
-                    {event.circuit_short_name}
-                    {event.location && event.location !== event.circuit_short_name && `, ${event.location}`}
-                  </span>
+                  {event.circuit_key && !isCompleted ? (
+                    <Link
+                      href={`/circuits/${event.circuit_key}`}
+                      className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+                    >
+                      <MapPin size={10} />
+                      {event.circuit_short_name}
+                      {event.location && event.location !== event.circuit_short_name && `, ${event.location}`}
+                    </Link>
+                  ) : (
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <MapPin size={10} />
+                      {event.circuit_short_name}
+                      {event.location && event.location !== event.circuit_short_name && `, ${event.location}`}
+                    </span>
+                  )}
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Calendar size={10} />
                     {dateRange}
